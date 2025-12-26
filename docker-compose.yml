@@ -1,0 +1,64 @@
+# Файл docker-compose.yml
+
+# Версия docker-compose:
+#version: '3' # version is obsolete
+
+# Перечень volume:
+volumes:
+  pg_data:
+  static:
+
+# Перечень контейнеров:
+services:
+  # Имя и описание первого контейнера; имя выбирает разработчик. 
+  # Это контейнер с базой данных:
+  # this name will be used as a value of DB_HOST env variable
+  postgres:
+    # Из какого образа запустить контейнер:
+    image: postgres:13.10
+    # Файл (или список файлов) с переменными окружения:
+    env_file: .env
+    # Какой volume подключить для этого контейнера:
+    volumes:
+      - pg_data:/var/lib/postgresql/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  # Имя и описание контейнера с бэкендом:
+  backend:
+    # Из какого Dockerfile собирать образ для этого контейнера:
+    build: ./backend/
+    env_file: .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - static:/code/collected_static # WORKDIR from Dockerfile + STATIC_ROOT from settyngs.py
+    # Какие контейнеры нужно запустить до старта этого контейнера:
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    restart: on-failure # just to ensure it is indeed started AFTER postgres is ready to listen?
+      
+  # Имя третьего контейнера. Это контейнер с фронтендом:
+  frontend:
+    env_file: .env
+    build: ./frontend/
+
+  ##
+  gateway:
+    env_file: .env
+    build: ./nginx/
+    ports:
+      - "8001:80" # TODO: change back to 80
+    volumes:
+      - static:/static
+    depends_on:
+      - backend
+    restart: on-failure
