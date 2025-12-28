@@ -1,7 +1,7 @@
 # Файл docker-compose.production.yml
 
 # Версия docker-compose:
-version: "3.0" # it matters on server
+#version: "3.9" # it matters on server
 
 # Перечень volume:
 volumes:
@@ -25,6 +25,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
+      start_period: 30s
       retries: 5
       timeout: 10s
 
@@ -38,7 +39,9 @@ services:
       - media:/code/media
     # Какие контейнеры нужно запустить до старта этого контейнера:
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+        restart: true
     restart: on-failure # just to ensure it is indeed started AFTER postgres is ready to listen?
 
   # Имя третьего контейнера. Это контейнер с фронтендом:

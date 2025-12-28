@@ -173,10 +173,12 @@ jobs:
         # Параметр script передаёт в action appleboy/ssh-action команды,
         # которые нужно выполнить на сервере, 
         # с которым установлено соединение:
+        # Seems like sudo apt-get install docker-compose-plugin on server
+        # solved our problem with legacy docker-compose (with hyphen)
         script: |
           cd ${{ secrets.TARGET_DIRECTORY }}
           # Выполняет pull образов с Docker Hub
-          sudo docker-compose -f docker-compose.production.yml pull
+          sudo docker compose -f docker-compose.production.yml pull
           # Перезапускает все контейнеры в Docker Compose
-          sudo docker-compose -f docker-compose.production.yml down
-          sudo docker-compose -f docker-compose.production.yml up -d
+          sudo docker compose -f docker-compose.production.yml down
+          sudo docker compose -f docker-compose.production.yml up -d
