@@ -1,0 +1,63 @@
+# Файл docker-compose.production.yml
+
+# Версия docker-compose:
+version: "3.0" # it matters on server
+
+# Перечень volume:
+volumes:
+  pg_data:
+  static:
+  media:
+
+# Перечень контейнеров:
+services:
+  # Имя и описание первого контейнера; имя выбирает разработчик. 
+  # Это контейнер с базой данных:
+  # this name will be used as a value of DB_HOST env variable
+  postgres:
+    # Из какого образа запустить контейнер:
+    image: postgres:13.10
+    # Файл (или список файлов) с переменными окружения:
+    env_file: .env
+    # Какой volume подключить для этого контейнера:
+    volumes:
+      - pg_data:/var/lib/postgresql/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+      timeout: 10s
+
+  # Имя и описание контейнера с бэкендом:
+  backend:
+    # Из какого Dockerfile собирать образ для этого контейнера:
+    env_file: .env
+    image: ${DOCKER_USERNAME}/kittygram_backend:latest
+    volumes:
+      - static:/code/static # WORKDIR from Dockerfile + STATIC_ROOT from settyngs.py
+      - media:/code/media
+    # Какие контейнеры нужно запустить до старта этого контейнера:
+    depends_on:
+      - postgres
+    restart: on-failure # just to ensure it is indeed started AFTER postgres is ready to listen?
+
+  # Имя третьего контейнера. Это контейнер с фронтендом:
+  frontend:
+    env_file: .env
+    image: ${DOCKER_USERNAME}/kittygram_frontend:latest
+    volumes:
+      - static:/app/build/static
+
+  ##
+  gateway:
+    env_file: .env
+    image: ${DOCKER_USERNAME}/kittygram_gateway:latest
+    ports:
+      - "80:80"
+    volumes:
+      - static:/app/static/
+      - media:/app/media
+    depends_on:
+      - backend
+      - frontend
+    restart: on-failure
