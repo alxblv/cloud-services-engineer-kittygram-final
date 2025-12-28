@@ -1,5 +1,6 @@
 # Данный Dockerfile предназначен для сборки и запуска приложения на основе Python
-FROM python:3.10-alpine
+# there would be no problems with PyYaml version (see requirements) if we don't use alpine-based image
+FROM python:3.10 
 
 # Устанавливаем переменную окружения PYTHONUNBUFFERED, чтобы отключить буферизацию вывода
 ENV PYTHONUNBUFFERED=1
@@ -13,7 +14,8 @@ COPY . .
 # The headers or library files could not be found for zlib,
 # a required dependency when compiling Pillow from source
 # from https://stackoverflow.com/a/78593745
-RUN apk add build-base zlib-dev jpeg-dev
+# this is not required when we don't use alpine-based image
+# RUN apk add build-base zlib-dev jpeg-dev
 
 # Our answer to "A new release of pip is available"
 RUN pip install --upgrade pip --root-user-action=ignore

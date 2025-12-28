@@ -9,8 +9,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-STATIC_ROOT = "/app/collected_static"
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -97,7 +95,10 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+# changed dir name to avoid copying with
+# docker compose exec backend cp -r /code/collected_static/ /code/static/
+# for gateway container to see
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
