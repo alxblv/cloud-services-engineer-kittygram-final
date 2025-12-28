@@ -64,7 +64,3 @@ services:
       - backend
       - frontend
     restart: on-failure
-
-## TODO: still have to manually run
-# docker compose exec backend python manage.py migrate
-# docker compose exec backend python manage.py collectstatic --noinput

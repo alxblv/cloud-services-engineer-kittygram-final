@@ -7,5 +7,5 @@ Pillow==9.0.0
 pytest==6.2.4
 pytest-django==4.4.0
 pytest-pythonpath==0.7.3
-#PyYAML==6.0 # AttributeError: cython_sources
-PyYAML==5.3.1 # https://github.com/yaml/pyyaml/issues/724#issuecomment-1638614907
+PyYAML==6.0 # AttributeError: cython_sources - only for alpine-based image?
+# PyYAML==5.3.1 # https://github.com/yaml/pyyaml/issues/724#issuecomment-1638614907

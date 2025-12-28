@@ -26,5 +26,8 @@ RUN pip install -r requirements.txt --root-user-action=ignore
 # Открываем порт 8000 для доступа к приложению
 EXPOSE 8000
 
-# Запускаем приложение командой python manage.py runserver 0.0.0.0:8000
-CMD ["python","manage.py","runserver","0.0.0.0:8000"] 
+# Собрали все действия в один скрипт
+ADD migrate_collect_static_run_server.sh WORKDIR/
+
+# Запускаем миграции, собираем статику и поднимаем сервер
+CMD ["sh", "migrate_collect_static_run_server.sh"]
