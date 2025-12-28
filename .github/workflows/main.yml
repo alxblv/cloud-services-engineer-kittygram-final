@@ -208,3 +208,15 @@ jobs:
     - name: Run tests
       run: |
         pytest -c tests.yml tests
+  # Порадовать себя нотификацией в Телеге
+  send_notification:
+    name: Send Notification
+    runs-on: ubuntu-latest
+    needs: autotests
+    steps:
+    - name: Send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Kittygram was deployed and passed autotests! 
