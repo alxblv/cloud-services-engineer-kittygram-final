@@ -11,7 +11,7 @@ on:
       - main
 # Перечень задач
 jobs:
-  tests:
+  linter:
     # Разворачиваем окружение:
     runs-on: ubuntu-latest
 
