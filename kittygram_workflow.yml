@@ -11,6 +11,7 @@ on:
       - main
 # Перечень задач
 jobs:
+
   # Прогоняем flake8 по коду бэкенда:
   linter:
     name: Lint backend code
@@ -208,6 +209,7 @@ jobs:
     - name: Run tests
       run: |
         pytest -c tests.yml tests
+
   # Порадовать себя нотификацией в Телеге
   send_notification:
     name: Send Notification
