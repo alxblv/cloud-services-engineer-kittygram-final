@@ -21,7 +21,7 @@ services:
     env_file: .env
     # Какой volume подключить для этого контейнера:
     volumes:
-      - pg_data:/var/lib/postgresql/
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 10s
