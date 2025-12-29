@@ -17,6 +17,9 @@ jobs:
     name: Lint backend code
     # Разворачиваем окружение:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
     # Копируем код проекта:
     - name: Check out code
@@ -26,7 +29,9 @@ jobs:
       uses: actions/setup-python@v4
     # В action setup-python@v4 передаём параметр — версию Python:
       with:
-        python-version: 3.9
+        python-version:  ${{ matrix.python-version }}
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
     # Обновляем pip, устанавливаем flake8 и flake8-isort, 
     # устанавливаем зависимости проекта:
     - name: Install dependencies
@@ -221,4 +226,7 @@ jobs:
       with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: Kittygram was deployed and passed autotests! 
+        message: |
+          Kittygram: workflow run #${{ github.run_number }}
+          after commit ${{ github.sha }} by ${{ github.actor }} was successful!
+          Commit: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
