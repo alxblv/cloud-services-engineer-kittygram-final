@@ -9,6 +9,9 @@ on:
     # Отслеживаем изменения только в ветке main:
     branches:
       - main
+  # Хотим запускать pipeline по кнопке "Run workflow"
+  workflow_dispatch:
+
 # Перечень задач
 jobs:
 
