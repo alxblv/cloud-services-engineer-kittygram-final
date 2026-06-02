@@ -10,7 +10,10 @@
     - content: |
         #!/bin/bash
       
-        # Опишите установку Docker
+        apt-get update
+        apt-get install -y docker.io docker-compose-v2
+        echo "Installation done!"
+
       path: "/root/vm_prep.sh"
       permissions: "0740"
     
