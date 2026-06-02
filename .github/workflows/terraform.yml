@@ -48,4 +48,24 @@ jobs:
         TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
         TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
 
-### Добавьте сюда стадии для apply и destroy
+    - name: Terraform Apply
+      working-directory: ./infra
+      if: ${{ github.event.inputs.action == 'apply' }}
+      run: terraform apply -auto-approve -var-file="terraform.tfvars"
+      env:
+        ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        TF_VAR_ssh_key: ${{ secrets.SSH_PUBLIC_KEY }}
+        TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
+        TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
+
+    - name: Terraform Destroy
+      working-directory: ./infra
+      if: ${{ github.event.inputs.action == 'destroy' }}
+      run: terraform destroy -auto-approve
+      env:
+        ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        TF_VAR_ssh_key: ${{ secrets.SSH_PUBLIC_KEY }}
+        TF_VAR_cloud_id: ${{ secrets.YC_CLOUD_ID }}
+        TF_VAR_folder_id: ${{ secrets.YC_FOLDER_ID }}
